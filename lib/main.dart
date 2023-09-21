@@ -10,7 +10,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: HomeScreen(),
+      theme: ThemeData(
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(
+                horizontal: 24, vertical: 8), // Adjust padding for button size
+            textStyle: const TextStyle(fontSize: 18), // Adjust font size
+          ),
+        ),
+      ),
+      home: const HomeScreen(),
     );
   }
 }
@@ -21,29 +30,47 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Home"),),
+      appBar: AppBar(
+        title: const Text("Home"),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Home", style: TextStyle(fontSize: 24),),
-            ElevatedButton(onPressed: (){
-              // Navigation Route home -> Route settings
-              //  Navigator.typeofNavigation(current location, destination);
-              Navigator.push(context, MaterialPageRoute(
-                builder: (context)=>SettingsScreen(),
-              ),
-              );
-
-            }, child: Text("Go to Settings"),
+            ElevatedButton(
+              onPressed: () {
+                // Navigation Route home -> Route settings
+                //  Navigator.typeofNavigation(current location, destination);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SettingsScreen(),
+                  ),
+                );
+              },
+              child: const Text("Go to Settings"),
             ),
-            ElevatedButton(onPressed: (){
-              Navigator.push(context, MaterialPageRoute(
-                builder: (context)=>OrderssScreen(),
-              ),
-              );
-
-            }, child: Text("Go to Orders"),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const OrdersScreen(),
+                  ),
+                );
+              },
+              child: const Text("Go to Orders"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ProductListScreen(),
+                  ),
+                );
+              },
+              child: const Text("Go to Product List"),
             ),
           ],
         ),
@@ -59,45 +86,67 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Settings"),),
+      appBar: AppBar(
+        title: const Text("Settings"),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Settings", style: TextStyle(fontSize: 24),),
-            ElevatedButton(onPressed: (){
-           Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>HomeScreen()), (route) => false);
-               }, child:Text("Home"))
-
-
+            const Text(
+              "Settings",
+              style: TextStyle(fontSize: 24),
+            ),
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const HomeScreen()),
+                      (route) => false);
+                },
+                child: const Text("Home"))
           ],
         ),
       ),
     );
   }
 }
+
 // Route Orders
-class OrderssScreen extends StatelessWidget   {
-  const OrderssScreen({Key? key}) : super(key: key);
+class OrdersScreen extends StatelessWidget {
+  const OrdersScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Orders"),),
+      appBar: AppBar(
+        title: const Text("Orders"),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Orders", style: TextStyle(fontSize: 24),),
-            TextButton(onPressed: (){
-
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>SettingsScreen() ));
-            }, child: Text(" Go to settings"),
+            const Text(
+              "Orders",
+              style: TextStyle(fontSize: 24),
             ),
-        TextButton(onPressed: (){
-         //Navigator.push(context, MaterialPageRoute(builder: (context)=>HomeScreen() ));
-          Navigator.pop(context);
-        }, child: Text(" Go to Home"),)
+            TextButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const SettingsScreen()));
+              },
+              child: const Text(" Go to settings"),
+            ),
+            TextButton(
+              onPressed: () {
+                //Navigator.push(context, MaterialPageRoute(builder: (context)=>HomeScreen() ));
+                Navigator.pop(context);
+              },
+              child: const Text(" Go to Home"),
+            )
           ],
         ),
       ),
@@ -105,4 +154,64 @@ class OrderssScreen extends StatelessWidget   {
   }
 }
 
+// Route Product list
+class ProductListScreen extends StatelessWidget {
+  const ProductListScreen({Key? key}) : super(key: key);
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Product list"),
+      ),
+      body: ListView.builder(
+          itemCount: 20,
+          itemBuilder: (context, index) {
+            return ListTile(
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return ProductDetailsScreen(productName: index.toString());
+                  // ignore: avoid_print
+                })).then((value) => {print(value)});
+              },
+              title: Text(index.toString()),
+              subtitle: Text("Product details $index"),
+            );
+          }),
+    );
+  }
+}
+
+// Route Product details
+class ProductDetailsScreen extends StatelessWidget {
+  final String productName;
+
+  const ProductDetailsScreen({Key? key, required this.productName})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text("Product Details"),
+        ),
+        body: Center(
+            child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              productName,
+              style: const TextStyle(fontSize: 30),
+            ),
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context, "Product Name $productName");
+                  //Navigator.push(context, MaterialPageRoute(builder: (context){
+                  //  return ProductListScreen();
+                  //  }));
+                },
+                child: const Text("Bank to Product List"))
+          ],
+        )));
+  }
+}
